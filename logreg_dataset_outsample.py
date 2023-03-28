@@ -63,10 +63,6 @@ def fit_predict(trainset, testset, test_datasets=None):
     X_train = X_train[:, ~nan_mask]
     X_test = X_test[:, ~nan_mask]
 
-    # DEBUG
-    print(np.unique(trainset['dataset_name'][idx_train]))
-    print(np.unique(y_test_name))
-
     logreg = LogisticRegression(
         penalty='l2',
         C=.002,  # set as in Brunner and Sippel (2023)
