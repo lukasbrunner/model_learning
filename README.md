@@ -1,6 +1,11 @@
 # Model Learning: disdinguish daily model output and observations using logisitic regression
 
-**Model learning** combines the terms _climate model_ and _machine learning_ providing a fremework to disdinguish models and observations based on their daily output maps using different machine learning classifiers. This repository useses **logistic regression** to classify maps of daily termperature as coming from observational datasets or climate models.  
+**Model learning** combines the terms _climate model_ and _machine learning_ providing a fremework to disdinguish models and observations based on their daily output maps using different machine learning classifiers. This repository useses **logistic regression** to classify maps of daily termperature as coming from observational datasets or climate models. Taking each daily map as sample and the grid cells as features we ask: **is this map more likely to come from a model or an observation?**   
+
+Example sample 1 | Example sample 2
+:-|:-
+![figure](plots/logreg_lm_gm_CMCC-CM2-HR4.png) | ![figure](plots/logreg_lm_gm_CMCC-CM2-HR4.png)
+
 
 ## Overview
 
