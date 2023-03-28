@@ -1,10 +1,22 @@
 # Model Learning: disdinguish daily model output and observations using logisitic regression
 
-**Model learning** combines the terms _climate model_ and _machine learning_ providing a fremework to disdinguish models and observations based on their daily output maps using different machine learning classifiers. This repository useses **logistic regression** to classify maps of daily termperature as coming from observational datasets or climate models. Taking each daily map as sample and the grid cells as features we ask: **is this map more likely to come from a model or an observation?**   
+**Model learning** combines the terms _climate model_ and _machine learning_ providing a framework to disdinguish models and observations based on their daily output maps using different machine learning classifiers. This repository useses **logistic regression** to classify maps of daily termperature as coming from observational datasets or climate models. Taking each daily map as sample and the grid cells as features we ask: **is this map more likely to come from a model or an observation?**   
 
 Example sample 1 | Example sample 2
 :-|:-
 ![figure](plots/logreg_lm_gm_CMCC-CM2-HR4.png) | ![figure](plots/logreg_lm_gm_CMCC-CM2-HR4.png)
+
+## Table of contents    
+
+- [Model Learning: disdinguish daily model output and observations using logisitic regression](#model-learning-disdinguish-daily-model-output-and-observations-using-logisitic-regression)
+  - [Table of contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Important terminology](#important-terminology)
+  - [Example cases](#example-cases)
+  - [Using pre-trained classifiers](#using-pre-trained-classifiers)
+  - [Training a new classifier](#training-a-new-classifier)
+    - [Regularization](#regularization)
+  - [About the land sea mask](#about-the-land-sea-mask)
 
 
 ## Overview
@@ -20,6 +32,13 @@ To avoid confusion between different terms this document uses the following conv
 - **classifier** refers to the machine learning algorithm used to distinguish models from observations
 
 ## Example cases
+
+---
+**NOTE:** the training data will not be made available but all original datasets are publicly available and trained classifiers are provided. See Brunner and Sippel (in review) for details on the datasets used and their sources.
+
+**NOTE:** the testdata are not yet available. They will be linked here from a Zonodo repository once the paper is published. 
+
+---
 
 The repository contains three example workflows. For all cases ocean temperature grid cells (land masked - lm) are used as features with the mean over all features subtracted (global mean removed - gm). Trained classifiers are saved in the `./trained_classifiers` folder. 
 
