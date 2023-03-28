@@ -88,11 +88,13 @@ def get_land_mask():
 
 
 def preprocess(ds: xr.DataArray, land_masked: bool, global_mean: bool):
+    attrs = ds.attrs
     if land_masked:
         mask = get_land_mask()
         ds = ds.where(~mask)  # inverse to create index
     if global_mean:
         ds = ds - area_weighted_mean(ds)
+    ds.attrs = attrs
     return ds
 
 
