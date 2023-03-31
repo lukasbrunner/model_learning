@@ -16,7 +16,7 @@ import pickle
 from sklearn.linear_model import LogisticRegression
 
 import core.core_functions as cf
-import core.dataset_categories as dc
+import core.dataset_functions as df
 
 random_init = 651
 land_masked = True
@@ -25,21 +25,21 @@ global_mean = True
 
 def read_trainset():
     samples_model = cf.get_samples(
-        period=slice('1984', '2001'),
+        period=slice('1982', '2001'),
         land_masked=land_masked,
         global_mean=global_mean,
         time_steps=200,
         random_init=random_init,
-        datasets=dc.model_names,  # 43 models
+        datasets=df.model_names,  # 43 models
     )
 
     samples_obs = cf.get_samples(
-        period=slice('1984', '2001'),
+        period=slice('1982', '2001'),
         land_masked=land_masked,
         global_mean=global_mean,
         time_steps=2150,  # 200*43/4
         random_init=random_init,
-        datasets=dc.observation_names,  # 4 observations
+        datasets=df.observation_names,  # 4 observations
     )
 
     return xr.concat([samples_model, samples_obs], dim='sample')
@@ -53,11 +53,11 @@ def fit_predict(trainset, testset, test_datasets=None):
     idx_test = np.isin(testset['dataset_name'], test_datasets)
 
     X_train = trainset.values[idx_train]
-    y_train = dc.get_category_ids(trainset['dataset_name'].values[idx_train])
+    y_train = df.get_category_ids(trainset['dataset_name'].values[idx_train])
 
     X_test = testset.values[idx_test]
     y_test_name = testset['dataset_name'].values[idx_test]
-    # y_test = dc.get_category_ids(y_test_name)
+    # y_test = df.get_category_ids(y_test_name)
 
     nan_mask = np.any(np.isnan(X_train), axis=0)
     X_train = X_train[:, ~nan_mask]
@@ -76,7 +76,7 @@ def fit_predict(trainset, testset, test_datasets=None):
         ('_lm' if land_masked else '') + ('_gm' if global_mean else ''),
         '-'.join(test_datasets))
     pickle.dump(logreg, open(os.path.join(
-        'trained_classifiers/outsample',
+        '../../data/trained_classifiers/outsample',
         savename), 'wb'))
 
     probability = logreg.predict_proba(X_test)
@@ -97,7 +97,7 @@ def main():
     )
 
     datasets_in_family = {}
-    for key, value in dc.dataset_families.items():
+    for key, value in df.dataset_families.items():
         datasets_in_family[value] = datasets_in_family.get(value, []) + [key]
 
     # NOTE: we assume here that all datasets are used!
@@ -116,7 +116,7 @@ def main():
     savename = 'logreg_dataset_outsample{}.sav'.format(
         ('_lm' if land_masked else '') + ('_gm' if global_mean else ''))
     pickle.dump(probabilities, open(os.path.join(
-        'trained_classifiers',
+        '../../data/trained_classifiers',
         savename), 'wb'))
 
 

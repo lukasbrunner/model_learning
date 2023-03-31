@@ -17,7 +17,7 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from collections import OrderedDict
 
 import core.core_functions as cf
-import core.dataset_categories as dc
+import core.dataset_functions as df
 
 
 def plot_hyper_param(res, param, xscale='linear'):
@@ -199,12 +199,12 @@ def plot_probabilities_model(
     # order alphabetically and reverse...
     binned = OrderedDict(sorted(binned.items())[::-1])
     # ...then move observations to the end
-    for obs in dc.observation_names[::-1]:
+    for obs in df.observation_names[::-1]:
         if obs in binned.keys():
             binned.move_to_end(obs)
 
-    model_labels = {idx: dataset for idx, dataset in enumerate(binned.keys()) if dataset in dc.model_names}
-    obs_labels = {idx: dataset for idx, dataset in enumerate(binned.keys()) if dataset in dc.observation_names}
+    model_labels = {idx: dataset for idx, dataset in enumerate(binned.keys()) if dataset in df.model_names}
+    obs_labels = {idx: dataset for idx, dataset in enumerate(binned.keys()) if dataset in df.observation_names}
 
     fig, ax = plt.subplots(figsize=(5, 8))
 

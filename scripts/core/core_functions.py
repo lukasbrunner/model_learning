@@ -83,7 +83,7 @@ def area_weighted_mean(ds: xr.DataArray):
 
 
 def get_land_mask():
-    land_mask = xr.open_dataset(os.path.join('data', 'land_mask.nc'))['land_mask']  # true on land
+    land_mask = xr.open_dataset(os.path.join('../../data', 'land_mask.nc'))['land_mask']  # true on land
     return land_mask
 
 
