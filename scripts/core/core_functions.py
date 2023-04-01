@@ -16,7 +16,10 @@ import xarray as xr
 from glob import glob
 from collections import OrderedDict
 
-BASEPATH = '/jetfs/home/lbrunner/ml_logreg_data'
+BASEPATH = {
+    'absolute_historical': '/jetfs/home/lbrunner/ml_logreg_data/absolute_historical',
+    'deseas_historical': '/jetfs/home/lbrunner/ml_logreg_data/deseas_historical',
+}   
 varn_map = {
     'ERA5': 't2m',
     'MERRA2': 'T2M',
@@ -69,10 +72,10 @@ def select_time_steps(
     return ds.isel(time=idx_sel)
 
 
-def get_filenames(models: list) -> list:
+def get_filenames(models: list, dataset_type: str='absolute_historical') -> list:
     if models is None:
-        return sorted(glob(os.path.join(BASEPATH, '*.nc')))
-    return sorted([glob(os.path.join(BASEPATH, f'tas_day_{model}_*.nc'))[0]
+        return sorted(glob(os.path.join(BASEPATH[dataset_type], '*.nc')))
+    return sorted([glob(os.path.join(BASEPATH[dataset_type], f'tas_day_{model}_*.nc'))[0]
                    for model in np.atleast_1d(models)])
 
 
@@ -98,8 +101,8 @@ def preprocess(ds: xr.DataArray, land_masked: bool, global_mean: bool):
     return ds
 
 
-def load_example_sample(dataset=None) -> xr.DataArray:
-    fn = get_filenames(dataset)[0]
+def load_example_sample(dataset=None, dataset_type: str='absolute_historical') -> xr.DataArray:
+    fn = get_filenames(dataset, dataset_type)[0]
     ds = xr.open_dataset(fn).isel(time=0)
     ds = ds.drop('height', errors='ignore')
     if 'zlev' in ds:
@@ -135,6 +138,7 @@ def get_samples(
         time_steps_select: str='random',
         random_init: int=None,
         datasets: list=None,
+        dataset_type: str='absolute_historical',
         verbose: bool=False,
 ) -> xr.DataArray:
     """Load and preprocess training and test samples from different datasets.
@@ -160,13 +164,17 @@ def get_samples(
         Only valid if select_time_steps is 'random'
     datasets : list, optional
         If not None use only the given datasets instead of all.
+    dataset_type : str, optional, by default None
+        If not None (equal to 'absolute_historical') use this dataset type.
+        {'absolute_historical', 'absolute_future', 'deseas_historical', 'deseas_future}
+    verbose : bool, optional, by default False
 
     Returns
     -------
     samples : xr.DataArray
         A 2-dimensional data array with dimensions (sample, features)
     """
-    filenames = get_filenames(datasets)
+    filenames = get_filenames(datasets, dataset_type)
 
     if not land_masked and np.any(['IOSST' in fn for fn in filenames]):
         raise ValueError('IOSST should only be used for land masked case!')
@@ -184,7 +192,6 @@ def get_samples(
         ds = preprocess(ds, land_masked, global_mean)
 
         ds = ds.stack(sample=['dataset_name', 'time'])
-        ds = ds.stack(feature=['lat', 'lon'])
 
         ds_list.append(ds)
 

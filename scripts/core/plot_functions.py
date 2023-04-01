@@ -116,12 +116,18 @@ def plot_map(da, **kwargs):
     return ax
 
 
-def plot_reliability_diagram(model, XX, yy):
-    yp = model.predict(XX)  # predicted category
-    yy_correct = (yp == yy).astype(int)  # correct predictions
-    pp = model.predict_proba(XX)  # assigned probabilities
-    pp_predicted = np.max(pp, axis=1)  # probability for assigned category
-    # pp_correct = pp.swapaxes(0, 1)[yy]  # probability for correct category
+def plot_reliability_diagram(classifier, XX, yy=None):
+    if yy is None:  # XX is an ImageGenerator
+        pp = classifier.predict(XX)  # probabilities per category
+        yp = np.argmax(pp, axis=-1)  # predicted category
+        yy_correct = (yp == XX.y).astype(int)  # correct predictions
+        pp_predicted = np.max(pp, axis=1)  # probability for assigned category
+    else:
+        yp = classifier.predict(XX)  # predicted category
+        yy_correct = (yp == yy).astype(int)  # correct predictions
+        pp = classifier.predict_proba(XX)  # assigned probabilities
+        pp_predicted = np.max(pp, axis=1)  # probability for assigned category
+        # pp_correct = pp.swapaxes(0, 1)[yy]  # probability for correct category
 
     bin_size = .1
     # NOTE: np.digitize returns 0 for values < np.min(bins)
