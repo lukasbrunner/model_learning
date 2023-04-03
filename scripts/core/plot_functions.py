@@ -10,14 +10,19 @@ Authors:
 Abstract:
 
 """
+import os
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from collections import OrderedDict
+from sklearn.metrics import confusion_matrix 
 
 import core.core_functions as cf
 import core.dataset_functions as df
+
+SAVEPATH = '../../plots/'
 
 
 def plot_hyper_param(res, param, xscale='linear'):
@@ -293,3 +298,114 @@ def plot_probabilities_model(
     plt.tight_layout()
 
     return ax
+
+
+def plot_confusion_matrix(yy, pp, savename=None):
+    fix, ax = plt.subplots(figsize=(12, 11))
+
+    
+    def set_labels(yy):
+        x_labels = df.get_dataset_mapper().keys()
+        y_labels = [y_label if idx in yy else '' for y_label, idx in df.get_dataset_mapper().items()]
+
+        ax.set_xlabel('Predicted category')
+        ax.xaxis.set_ticks_position('bottom')
+        ax.set_xticks(np.arange(len(x_labels)))
+        ax.set_xticklabels(x_labels, rotation=90)
+
+        ax.set_ylabel('True category')
+        ax.set_yticks(np.arange(len(y_labels)))
+        ax.set_yticklabels(y_labels)
+
+        
+    def annotate_cells(matrix):
+        for ii in range(len(matrix)):
+            for jj in range(len(matrix[ii])):
+                number = matrix[ii, jj] * 100  # fraction -> percent
+                if np.around(number, -1) >= 10:
+                    if number > 10:
+                        ax.text(jj, ii, int(np.around(number, 0)), fontsize='x-small',
+                            ha="center", va="center", color="w")
+                    else:
+                        ax.text(jj, ii, int(np.around(number, 0)), fontsize='x-small',
+                            ha="center", va="center")
+                elif np.around(number, 1) >= .1:
+                    ax.text(jj, ii, '{:.1f}'.format(np.around(number, 1)),
+                            fontsize='x-small',
+                            ha="center", va="center", color="k")
+
+                elif np.around(number, 3) >= .001:
+                    ax.text(jj, ii, '.0{}'.format(int(np.around(number, 3)*100)),
+                            fontsize='x-small',
+                        ha="center", va="center", color="k")
+
+
+    def make_colormap(bounds, type_):
+        if type_ == 'correct':
+            colors = plt.cm.Greens(np.linspace(0, 1, 10))
+        elif type_ == 'family':
+            colors = plt.cm.Purples(np.linspace(0, 1, 10))
+        elif type_ == 'wrong':
+            colors = plt.cm.Reds(np.linspace(0, 1, 10))
+        elif type_ == 'colorbar':
+            colors = plt.cm.Greys(np.linspace(0, 1, 10))
+
+        cmap = mpl.colors.LinearSegmentedColormap.from_list('map_white', colors[2:-4])
+        cmap.set_over(colors[-1])
+        if type_ == 'wrong':
+            cmap.set_under((1, 1, 1, 1))
+            cmap.set_bad((1, 1, 1, 1))
+        else:
+            cmap.set_under('none')
+            cmap.set_bad('none')
+
+        norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+        return cmap, norm
+
+
+    def get_family_matrix(matrix, yy):
+        """Create a matrix which contains only misclassifications within families."""
+        arr = [*df.dataset_families.values()]
+        idx_groups = {}
+        for idx, dataset_name in enumerate(arr):
+            idx_groups.setdefault(dataset_name,[]).append(idx)
+
+        matrix_family = np.empty_like(matrix) * np.nan
+        for idxs in idx_groups.values():
+            for idx, ii in enumerate(idxs):
+                for jj in idxs[idx:]:
+                    matrix_family[ii,jj] = matrix[ii,jj]
+                    matrix_family[jj,ii] = matrix[jj,ii]
+
+        return matrix_family
+
+    matrix = confusion_matrix(yy, np.argmax(pp, axis=-1), normalize='true')
+
+    bounds = [1e-4, 1e-3, 1e-2, 1e-1]
+    # base colormap for matrix with all entries
+    cmap, norm = make_colormap(bounds, 'wrong')
+    im = ax.matshow(matrix, cmap=cmap, norm=norm)  
+
+    # replace colormap for misclassifcations within families
+    cmap, norm = make_colormap(bounds, 'family')
+    matrix_family = get_family_matrix(matrix, yy)
+    ax.matshow(matrix_family, cmap=cmap, norm=norm) 
+
+    # replace colormap for correct predictions
+    cmap, norm = make_colormap(bounds, 'correct')
+    ax.matshow(np.diag(np.diag(matrix)), cmap=cmap, norm=norm)      
+
+    # colorbar
+    cmap, norm = make_colormap(bounds, 'colorbar')
+    im = ax.matshow(np.zeros_like(matrix), cmap=cmap, norm=norm)      
+
+    annotate_cells(matrix)
+    set_labels(yy)
+
+    cbar = ax.figure.colorbar(im, ax=ax, extend='both', pad=.02, label='Fraction of true category', shrink=.89)
+    cbar.ax.set_yticklabels(['>0%', '0.1%', '1%', '10%'])
+
+    if savename is not None:
+        plt.savefig(
+            os.path.join(SAVEPATH, savename), 
+            bbox_inches='tight')

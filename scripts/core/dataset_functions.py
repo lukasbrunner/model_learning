@@ -145,8 +145,12 @@ def get_groups(dataset_names: list) -> list:
     return [dataset_families[dataset_name] for dataset_name in dataset_names]
 
 
+def get_dataset_mapper() -> dict:
+    return {dataset_name: idx for idx, dataset_name in enumerate(model_names + observation_names)}
+
+
 def get_dataset_ids(dataset_names: list) -> list:
-    mapper = {dataset_name: idx for idx, dataset_name in enumerate(model_names + observation_names)}
+    mapper = get_dataset_mapper()
     if isinstance(dataset_names, str):
         return mapper[dataset_names]
     return [mapper[dataset_name] for dataset_name in dataset_names]
