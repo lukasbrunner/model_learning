@@ -113,8 +113,10 @@ def main():
 
         probabilities.update(proba)
 
-    savename = 'logreg_dataset_outsample{}.sav'.format(
-        ('_lm' if land_masked else '') + ('_gm' if global_mean else ''))
+    savename =  'binary_logreg_dataset_outsample{}{}.sav'.format(
+        dataset_type,
+        ('_lm' if land_masked else '') + ('_gm' if global_mean else ''),
+    )
     pickle.dump(probabilities, open(os.path.join(
         '../../data/trained_classifiers',
         savename), 'wb'))
