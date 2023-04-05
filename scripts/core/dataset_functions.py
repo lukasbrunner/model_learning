@@ -7,8 +7,7 @@
 Authors:
 - Lukas Brunner || l.brunner@univie.ac.at
 
-Abstract:
-
+Abstract: Things that depend on the datasets used are isolated here.
 """
 model_names = [
   'ACCESS-CM2',
@@ -62,6 +61,13 @@ observation_names = [
     'IOSST',
     'MERRA2',
 ]
+
+varn_map = {
+    'ERA5': 't2m',
+    'MERRA2': 'T2M',
+    'IOSST': 'sst',
+    '20CR': 'air',
+}
 
 dataset_families = {
     'ACCESS-CM2': 'ACCESS',

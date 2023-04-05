@@ -7,8 +7,7 @@
 Authors:
 - Lukas Brunner || l.brunner@univie.ac.at
 
-Abstract:
-
+Abstract: Main functions to load and preprocess the data.
 """
 import os
 import numpy as np
@@ -16,16 +15,12 @@ import xarray as xr
 from glob import glob
 from collections import OrderedDict
 
+from core.dataset_functions import varn_map
+
 BASEPATH = {
     'absolute_historical': '/jetfs/home/lbrunner/ml_logreg_data/absolute_historical',
     'deseas_historical': '/jetfs/home/lbrunner/ml_logreg_data/deseas_historical',
 }   
-varn_map = {
-    'ERA5': 't2m',
-    'MERRA2': 'T2M',
-    'IOSST': 'sst',
-    '20CR': 'air',
-}
 
 
 def select_time_steps(
@@ -73,6 +68,7 @@ def select_time_steps(
 
 
 def get_filenames(models: list, dataset_type: str='absolute_historical') -> list:
+    """Get all filenames in the given path or the filenames for the given models."""
     if models is None:
         return sorted(glob(os.path.join(BASEPATH[dataset_type], '*.nc')))
     return sorted([glob(os.path.join(BASEPATH[dataset_type], f'tas_day_{model}_*.nc'))[0]
@@ -86,11 +82,13 @@ def area_weighted_mean(ds: xr.DataArray):
 
 
 def get_land_mask():
+    """Load the land mask from the data directory."""
     land_mask = xr.open_dataset(os.path.join('../../data', 'land_mask.nc'))['land_mask']  # true on land
     return land_mask
 
 
 def preprocess(ds: xr.DataArray, land_masked: bool, global_mean: bool):
+    """Preprocess the data by masking out land grid cells and removing the global mean."""
     attrs = ds.attrs
     if land_masked:
         mask = get_land_mask()
@@ -102,6 +100,7 @@ def preprocess(ds: xr.DataArray, land_masked: bool, global_mean: bool):
 
 
 def load_example_sample(dataset=None, dataset_type: str='absolute_historical') -> xr.DataArray:
+    """Load an example dataset"""
     fn = get_filenames(dataset, dataset_type)[0]
     ds = xr.open_dataset(fn).isel(time=0)
     ds = ds.drop('height', errors='ignore')
@@ -115,6 +114,7 @@ def load_example_sample(dataset=None, dataset_type: str='absolute_historical') -
 
 
 def load_dataset(fn: str) -> xr.DataArray:
+    """Load and clean a dataset."""
     ds = xr.open_dataset(fn, use_cftime=True)
     ds = ds.drop('height', errors='ignore')
     if 'zlev' in ds:
