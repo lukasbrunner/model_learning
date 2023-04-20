@@ -1,8 +1,10 @@
-# Model Learning: disdinguish models and observations based on daily output
+# Model Learning: disdinguish models and observations based on daily output maps
 
-**Model learning** combines the terms _climate model_ and _machine learning_ providing a framework to disdinguish models and observations based on output maps. It draws on the concepts of model performance ("how different is a model from the observations?") and model independence ("how different are models from each other?"). The repository contains different machine learning classifiers to disdinguish models from observations (binary classification) and to models from each other (multi-class classification). 
+**Model learning** combines the terms _climate model_ and _machine learning_ providing a framework to disdinguish models and observations based on output maps. It draws on the concepts of model performance ("how different is a model from the observations?") and model independence ("how different are models from each other?"). The repository contains different machine learning classifiers to disdinguish models from observations (binary classification) and models from each other (multi-class classification). 
 
-Compared to traditional approaches considerably shorter time periods are used as basis for the classification and extensive out-of-sample testing is performed. One boiled down question we ask is: **is this gridded map of daily temperature more likely to come from a model or from an observation?** 
+Compared to traditional approaches the use of data-driven machine learning approaches allows to use considerably shorter time periods as basis for the classification and results hold for out-of-sample datasets. One boiled down question we ask is: 
+
+**Is this gridded map of daily temperature more likely to come from a model or from an observation?** 
 
 Example sample 1 | Example sample 2
 :-|:-
@@ -11,7 +13,7 @@ Example sample 1 | Example sample 2
 Table of contents 
 -----------------   
 
-- [Model Learning: disdinguish models and observations based on daily output](#model-learning-disdinguish-models-and-observations-based-on-daily-output)
+- [Model Learning: disdinguish models and observations based on daily output maps](#model-learning-disdinguish-models-and-observations-based-on-daily-output-maps)
   - [Table of contents](#table-of-contents)
   - [Overview](#overview)
     - [Terminology](#terminology)
@@ -19,6 +21,7 @@ Table of contents
     - [Input data](#input-data)
   - [Example cases for `binary_logistic_regression`](#example-cases-for-binary_logistic_regression)
     - [Using pre-trained classifiers](#using-pre-trained-classifiers)
+    - [Some results (presented at EGU 2023)](#some-results-presented-at-egu-2023)
     - [Training a new classifier](#training-a-new-classifier)
     - [Regularization](#regularization)
   - [About the included land sea mask](#about-the-included-land-sea-mask)
@@ -32,19 +35,19 @@ You are free to reuse this code for your own research following the conditions o
 
 ### Terminology
 To avoid confusion between different terms this document uses the following conventions:
-- **model** refers to physical climate models which provide daily output maps used as input for the machine learning classifiers
-- **classifier** refers to the machine learning algorithm used to distinguish models from observations
+- **model** exclusively refers to physical climate models which provide daily output maps used as input for the machine learning classifiers
+- **classifier** refers to the machine learning algorithms used to distinguish models from observations
 
 ### Structure of the repository
 
 The repository contains the following folders:
-- `data`: contains the training and test data as well as several pre-trained classifiers
-- `plots`: is the default plot folder for the scripts and contains some examples
+- `data`: contains the training and test data as well as several pre-trained classifiers (most data have to be downloaded separately)
+- `plots`: is the default folder to save figues for the scripts and contains some examples
 - `scripts`: contains the scripts used to train and test the classifiers
-  - `core`: contains the core functions used by the scripts
+  - `core`: contains the core functions used by all scripts
   - `binary_logistic_regression`: **This is the recommended starting point** as it represents to simplest and most extensively documented case. It contains the scripts used to train and test the binary case (models versus observations) based on logistic regression classifiers.
   - `binary_cnn`: contains scripts based on convolutional neural network classifiers.
-  - `multi_class_cnn`: contains scripts based on convolutional neural network classifiers for the multi-class case (recognise each dataset by its name).
+  - `multi_class_cnn`: contains scripts based on convolutional neural network classifiers for the multi-class case (recognize each dataset by its name).
 
 ### Input data
 
@@ -61,13 +64,11 @@ Example cases for `binary_logistic_regression`
 ----------------------------------------------
 
 ---
-**NOTE:** the training data will not be made available but all original datasets are publicly available and trained classifiers are provided. See Brunner and Sippel (in review) for details on the datasets used and their sources.
-
-**NOTE:** the testdata are not yet available. They will be linked here from a Zonodo repository once the paper is published. 
+**NOTE:** the data are not yet available. They will be linked here from a Zonodo repository once the paper is published. 
 
 ---
 
-The folder contains three example workflows. For all cases ocean temperature grid cells (land masked - lm) are used as features with the mean over all features subtracted (daily global mean removed - gm). Trained classifiers are saved in the `./trained_classifiers` folder. 
+The folder contains three example workflows. For all cases ocean temperature grid cells (land masked - lm) are used as features with the mean over all features subtracted (daily global mean removed - gm). Trained classifiers are saved in the `./data/trained_classifiers` folder. 
 
 1.  Training and testing on all datasets but in different time periods (temporally out-of-sample). 
     - `./binary_logreg_fit.ipynb`
@@ -87,10 +88,14 @@ The repository contains pre-trained classifiers which can be used for testing ar
 
 You can load any dataset and use the `preprocess` function to prepare it for classification. The dataset should have the following properties:
 - 3D array with dimensions (time, lat, lon)
-- the variable should be daily temperature (although related variables such as maximum temperature also work)
+- the variable should be daily temperature (although there also is skill for some related variables such as maximum temperature)
 - the spatial resolution should be 2.5x2.5 degrees (to regrid from another resolution use, e.g., `cdo remapbil,data/land_mask.nc input.nc output.nc`)
 
 For more information follow the examples given in `./binary_logreg_predict_single.ipynb`. 
+
+### Some results ([presented at EGU 2023](https://meetingorganizer.copernicus.org/EGU23/EGU23-492.html))
+
+
 
 ### Training a new classifier
 
@@ -98,7 +103,7 @@ For an example on how to train a new classifier follow the steps in `./binary_lo
 
 ### Regularization
 
-If you want to speed up the training process you can set the `C` parameter in the `LogisticRegression` to a fixed value instead of optimising it using cross-validation. For the global case an sensible order of magnitude is `1e-2` (the lm-gm case uses `0.002`). 
+If you want to speed up the training process you can set the `C` parameter in the `LogisticRegression` to a fixed value instead of optimising it using cross-validation. For the case of global daily temperature an sensible order of magnitude is `1e-2` (the lm-gm case uses `0.002`). 
 
 ## About the included land sea mask
 
