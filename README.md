@@ -95,7 +95,7 @@ For more information follow the examples given in `./binary_logreg_predict_singl
 
 ### Some results ([presented at EGU 2023](https://meetingorganizer.copernicus.org/EGU23/EGU23-492.html))
 
-
+![figure](poster_EGU2023.jpg) 
 
 ### Training a new classifier
 
