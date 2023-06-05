@@ -4,25 +4,23 @@
 
 Compared to traditional approaches the use of data-driven machine learning approaches allows to use considerably shorter time periods as basis for the classification and results hold for out-of-sample datasets. One boiled down question we ask is: 
 
-**Is a gridded map of daily temperature more likely to come from a model or from an observation?** 
+**Which of these maps is from a model and which from an observation?** 
 
 ![figure](plots/examples/examples_nolabel.gif)
 
 Table of contents 
 -----------------   
 
-- [Model Learning: disdinguish models and observations based on daily output maps](#model-learning-disdinguish-models-and-observations-based-on-daily-output-maps)
-  - [Table of contents](#table-of-contents)
-  - [Overview](#overview)
-    - [Terminology](#terminology)
-    - [Structure of the repository](#structure-of-the-repository)
-    - [Input data](#input-data)
-  - [Example cases for `binary_logistic_regression`](#example-cases-for-binary_logistic_regression)
-    - [Using pre-trained classifiers](#using-pre-trained-classifiers)
-    - [Some results (presented at EGU 2023)](#some-results-presented-at-egu-2023)
-    - [Training a new classifier](#training-a-new-classifier)
-    - [Regularization](#regularization)
-  - [About the included land sea mask](#about-the-included-land-sea-mask)
+- [Overview](#overview)
+  - [Terminology](#terminology)
+  - [Structure of the repository](#structure-of-the-repository)
+  - [Input data](#input-data)
+- [Example cases for `binary_logistic_regression`](#example-cases-for-binary_logistic_regression)
+  - [Using pre-trained classifiers](#using-pre-trained-classifiers)
+  - [Some results (presented at EGU 2023)](#some-results-presented-at-egu-2023)
+  - [Training a new classifier](#training-a-new-classifier)
+  - [Regularization](#regularization)
+- [About the included land sea mask](#about-the-included-land-sea-mask)
 
 Overview
 --------
@@ -59,7 +57,7 @@ Two on-the-fly pre-processing steps are also available:
 
 #### Data availability
 
-The data used in for training and testing the classifier are quite large and I do not want to duplicate all of them, since most of them are available online. As a compromise please find the CMIP6 model data on [ESGF](https://esgf-node.llnl.gov/search/cmip6/) and all other datasets on [Zenodo](10.5281/zenodo.7998437). 
+The data used in for training and testing the classifier are quite large and I do not want to duplicate all of them, since most of them are available online. As a compromise please find the CMIP6 model data on [ESGF](https://esgf-node.llnl.gov/search/cmip6/) and the observational datasets on [Zenodo](10.5281/zenodo.7998437). 
 
 Example cases for `binary_logistic_regression`
 ----------------------------------------------
@@ -89,8 +87,6 @@ You can load any dataset and use the `preprocess` function to prepare it for cla
 
 For more information follow the examples given in `./binary_logreg_predict_single.ipynb`. 
 
-![figure](plots/examples/examples_binary.gif)
-
 ### Some results ([presented at EGU 2023](https://meetingorganizer.copernicus.org/EGU23/EGU23-492.html))
 
 ![figure](poster_EGU23.jpg) 
@@ -110,3 +106,5 @@ The land sea mask aims to fulfill two requirements:
 - mask out grid cells not available in one of the datasets (the only dataset used which does not have all grid cells available is IOSST). 
 
 Therefore, it combines two masks, one based on the Python `regionmask` package (drawing on natural earth polygons) and one based on missing values in the IOSST dataset (see `./create_land_mask.ipynb`).
+
+![figure](plots/examples/examples_binary.gif)
