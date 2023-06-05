@@ -4,11 +4,9 @@
 
 Compared to traditional approaches the use of data-driven machine learning approaches allows to use considerably shorter time periods as basis for the classification and results hold for out-of-sample datasets. One boiled down question we ask is: 
 
-**Is this gridded map of daily temperature more likely to come from a model or from an observation?** 
+**Is a gridded map of daily temperature more likely to come from a model or from an observation?** 
 
-Example sample 1 | Example sample 2
-:-|:-
-![figure](plots/logreg_lm_gm_CMCC-CM2-HR4.png) | ![figure](plots/logreg_lm_gm_ERA5.png)
+![figure](plots/examples/examples_nolabel.gif)
 
 Table of contents 
 -----------------   
@@ -29,9 +27,9 @@ Table of contents
 Overview
 --------
 
-The scientific and methodological details are discussed in the paper: Brunner and Sippel (in review): Identifying climate models based on their daily output using machine learning. _Env. Data Sci._ Preprint: https://doi.org/10.31223/X53M0J
+The scientific and methodological details are discussed in the paper: Brunner and Sippel (accepted): Identifying climate models based on their daily output using machine learning. _Env. Data Sci._ Preprint: https://doi.org/10.31223/X53M0J
 
-You are free to reuse this code for your own research following the conditions outlinend in the [license](./LICENSE). If you do so, please cite the paper above. For any questions feel free to contact me via [email](mailto:l.brunner@univie.ac.at). 
+You are free to reuse this code for your own research following the conditions outlinend in the [license](./LICENSE). If you do so, please cite the paper above. I try to keep track of people working with my code so I would be happy if you'd also let me know when using my code or in case you have any questions of course: [email](mailto:l.brunner@univie.ac.at). 
 
 ### Terminology
 To avoid confusion between different terms this document uses the following conventions:
@@ -51,7 +49,7 @@ The repository contains the following folders:
 
 ### Input data
 
-The default input data format are daily maps of 2-m surface air temperature on a 2.5x2.5 degree latitude-longitude grid but other frequencies, variables, or resolutions are inprinciple also possible. We use two different pre-processing steps:
+The default input data format are daily maps of 2-m surface air temperature on a 2.5x2.5 degree latitude-longitude grid (regridded with `cdo rempcon2`) but other frequencies, variables, or resolutions are inprinciple also possible. We use two different pre-processing steps:
 - absolute fields
 - deseasonalised fields: mean seasonal cycle removed from each day of the year, grid cell and dataset separately (see Brunner and Sippel (in review) for details)
 
@@ -59,14 +57,12 @@ Two on-the-fly pre-processing steps are also available:
 - land masked (lm) fields
 - fields with daily global mean removed (gm)
 
+#### Data availability
+
+The data used in for training and testing the classifier are quite large and I do not want to duplicate all of them, since most of them are available online. As a compromise please find the CMIP6 model data on [ESGF](https://esgf-node.llnl.gov/search/cmip6/) and all other datasets on [Zenodo](10.5281/zenodo.7998437). 
 
 Example cases for `binary_logistic_regression`
 ----------------------------------------------
-
----
-**NOTE:** the data are not yet available. They will be linked here from a Zonodo repository once the paper is published. 
-
----
 
 The folder contains three example workflows. For all cases ocean temperature grid cells (land masked - lm) are used as features with the mean over all features subtracted (daily global mean removed - gm). Trained classifiers are saved in the `./data/trained_classifiers` folder. 
 
@@ -92,6 +88,8 @@ You can load any dataset and use the `preprocess` function to prepare it for cla
 - the spatial resolution should be 2.5x2.5 degrees (to regrid from another resolution use, e.g., `cdo remapbil,data/land_mask.nc input.nc output.nc`)
 
 For more information follow the examples given in `./binary_logreg_predict_single.ipynb`. 
+
+![figure](plots/examples/examples_binary.gif)
 
 ### Some results ([presented at EGU 2023](https://meetingorganizer.copernicus.org/EGU23/EGU23-492.html))
 
