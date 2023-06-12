@@ -25,7 +25,8 @@ Table of contents
 Overview
 --------
 
-The scientific and methodological details are discussed in the paper: Brunner and Sippel (accepted): Identifying climate models based on their daily output using machine learning. _Env. Data Sci._ Preprint: https://doi.org/10.31223/X53M0J
+The scientific and methodological details are discussed in the paper: 
+and Sippel ([2023](https://doi.org/10.1017/eds.2023.23)): Identifying climate models based on their daily output using machine learning. _Env. Data Sci._
 
 You are free to reuse this code for your own research following the conditions outlinend in the [license](./LICENSE). If you do so, please cite the paper above. I try to keep track of people working with my code so I would be happy if you'd also let me know when using my code or in case you have any questions of course: [email](mailto:l.brunner@univie.ac.at). 
 
@@ -49,7 +50,7 @@ The repository contains the following folders:
 
 The default input data format are daily maps of 2-m surface air temperature on a 2.5x2.5 degree latitude-longitude grid (regridded with `cdo rempcon2`) but other frequencies, variables, or resolutions are inprinciple also possible. We use two different pre-processing steps:
 - absolute fields
-- deseasonalised fields: mean seasonal cycle removed from each day of the year, grid cell and dataset separately (see Brunner and Sippel (in review) for details)
+- deseasonalised fields: mean seasonal cycle removed from each day of the year, grid cell and dataset separately (see Brunner and Sippel ([2023](https://doi.org/10.1017/eds.2023.23)) for details)
 
 Two on-the-fly pre-processing steps are also available:
 - land masked (lm) fields
@@ -67,7 +68,7 @@ The folder contains three example workflows. For all cases ocean temperature gri
 1.  Training and testing on all datasets but in different time periods (temporally out-of-sample). 
     - `./binary_logreg_fit.ipynb`
     - `./binary_logreg_predict.ipynb`
-2.  Training only on datasets not used for testing (dataset out-of-sample) iteratively. Note that this leads to a different classifier for each group of test datasets. See Brunner and Sippel (in review) for details on the grouping of the datasets. 
+2.  Training only on datasets not used for testing (dataset out-of-sample) iteratively. Note that this leads to a different classifier for each group of test datasets. See Brunner and Sippel ([2023](https://doi.org/10.1017/eds.2023.23)) for details on the grouping of the datasets. 
     - `./binary_logreg_dataset_outsample.py`
     - `./binary_logreg_dataset_outsample_plot.ipynb`
 3. Testing the trained classifiers on an arbitrary dataset. This is mainly intended for initial testing and playing around with new datasets.   
